@@ -1266,48 +1266,81 @@ exports.updateHeaderContent = async (req, res) => {
       return res.status(404).json({ success: false, message: "Header not found" });
     }
 
-    if (logoImage) {
-      header.logoImage = await uploadImageToCloud(logoImage, "landingHeader/logo", "logoImage");
+    const isEmpty = (val) => val === undefined || val.trim() === "";
+
+    if (!isEmpty(logoImage)) {
+      if (!logoImage.startsWith("http")) {
+        header.logoImage = await uploadImageToCloud(logoImage, "landingHeader/logo", "logoImage");
+      }
+    } else if (logoImage !== undefined) {
+      header.logoImage = "";
     }
 
-    if (sideLogo) {
-      header.sideLogo = await uploadImageToCloud(sideLogo, "landingHeader/sideLogo", "sideLogo");
+    if (!isEmpty(sideLogo)) {
+      if (!sideLogo.startsWith("http")) {
+        header.sideLogo = await uploadImageToCloud(sideLogo, "landingHeader/sideLogo", "sideLogo");
+      }
+    } else if (sideLogo !== undefined) {
+      header.sideLogo = "";
     }
 
-    if (staticImage) {
-      header.staticImage = await uploadImageToCloud(staticImage, "landingHeader/staticImage", "staticImage");
+    if (!isEmpty(staticImage)) {
+      if (!staticImage.startsWith("http")) {
+        header.staticImage = await uploadImageToCloud(staticImage, "landingHeader/staticImage", "staticImage");
+      }
+    } else if (staticImage !== undefined) {
+      header.staticImage = "";
     }
 
-    if (lightPaper) {
-      header.lightPaper = await uploadImageToCloud(lightPaper, "landingHeader/papers", "lightPaper");
+    if (!isEmpty(lightPaper)) {
+      if (!lightPaper.startsWith("http")) {
+        header.lightPaper = await uploadImageToCloud(lightPaper, "landingHeader/papers", "lightPaper");
+      }
+    } else if (lightPaper !== undefined) {
+      header.lightPaper = "";
     }
 
-    if (whitePaper) {
-      header.whitePaper = await uploadImageToCloud(whitePaper, "landingHeader/papers", "whitePaper");
+    if (!isEmpty(whitePaper)) {
+      if (!whitePaper.startsWith("http")) {
+        header.whitePaper = await uploadImageToCloud(whitePaper, "landingHeader/papers", "whitePaper");
+      }
+    } else if (whitePaper !== undefined) {
+      header.whitePaper = "";
     }
 
-    if (onePager) {
-      header.onePager = await uploadImageToCloud(onePager, "landingHeader/papers", "onePager");
+    if (!isEmpty(onePager)) {
+      if (!onePager.startsWith("http")) {
+        header.onePager = await uploadImageToCloud(onePager, "landingHeader/papers", "onePager");
+      }
+    } else if (onePager !== undefined) {
+      header.onePager = "";
     }
 
-    if (navLogo) {
-      header.navLogo = await uploadImageToCloud(navLogo, "landingHeader/navLogo", "navLogo");
+    if (!isEmpty(navLogo)) {
+      if (!navLogo.startsWith("http")) {
+        header.navLogo = await uploadImageToCloud(navLogo, "landingHeader/navLogo", "navLogo");
+      }
+    } else if (navLogo !== undefined) {
+      header.navLogo = "";
     }
 
-    // ✅ Handle auditReport (ignore empty or missing)
-    if (auditReport !== undefined && auditReport !== "") {
-      header.auditReport = auditReport.startsWith("http")
-        ? auditReport
-        : await uploadImageToCloud(auditReport, "landingHeader/papers", "auditReport");
+    if (!isEmpty(auditReport)) {
+      if (!auditReport.startsWith("http")) {
+        header.auditReport = await uploadImageToCloud(auditReport, "landingHeader/papers", "auditReport");
+      }
+    } else if (auditReport !== undefined) {
+      header.auditReport = "";
     }
 
-    // ✅ Handle solidProof (ignore empty or missing)
-    if (solidProof !== undefined && solidProof !== "") {
-      header.solidProof = solidProof.startsWith("http")
-        ? solidProof
-        : await uploadImageToCloud(solidProof, "landingHeader/papers", "solidProof");
+    if (!isEmpty(solidProof)) {
+      if (!solidProof.startsWith("http")) {
+        header.solidProof = await uploadImageToCloud(solidProof, "landingHeader/papers", "solidProof");
+      }
+    } else if (solidProof !== undefined) {
+      header.solidProof = "";
     }
 
+    // ✅ Handle text fields
     if (headerTitle !== undefined) header.headerTitle = headerTitle;
     if (subTitle !== undefined) header.subTitle = subTitle;
     if (description !== undefined) header.description = description;
@@ -1321,6 +1354,7 @@ exports.updateHeaderContent = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
 
 
 

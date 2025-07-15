@@ -28,7 +28,10 @@ const tokenTrackerSchema = new mongoose.Schema({
      BurnedToken: {
         type: Number,
         required: true
-    }
+    },
+    maxSupply: {
+        type: Number,
+    },
 }, { timestamps: true, versionKey: false });
 
 const TokenTrackerModel = mongoose.model('TokenTracker', tokenTrackerSchema);
