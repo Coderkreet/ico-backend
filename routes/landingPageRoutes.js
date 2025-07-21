@@ -193,6 +193,9 @@ router.delete("/delete-description/:id", contentController.deleteDescription);
 router.post("/create-contact", contentController.createContact);
 router.get("/get-contact", contentController.getAllContacts);
 
+router.get('/get-xio-data', contentController.getXioData);
+router.post('/purchase-xio-coin', contentController.purchaseXioCoin);
+
 
 
 module.exports = router;

@@ -26,6 +26,9 @@ const Blog = require('../models/blog.model');
 const CopyWrite = require("../models/copyWrite.model");
 const FooterDescription = require("../models/footerDescription.model");
 const Contact = require("../models/contact.model");
+const tokenvalueModel = require('../models/tokenvalueModel');
+const { generateTxnId } = require('../utils/generateRandomReferralLink');
+const { TransferXIOCoin } = require('./walletController');
 // --- Event Handlers ---
 exports.createEvent = async (req, res) => {
  try {
@@ -2350,4 +2353,86 @@ exports.getAllContacts = async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
+};
+
+
+exports.getXioData = async (req, res) => {
+    try {
+
+
+      console.log("Fetching Nebulux data...");
+        const nebuluxData = await tokenvalueModel.findOne({});
+        if (!nebuluxData) {
+            return res.status(404).json({ success: false, message: "Nebulux data not found." });
+        }
+        return res.status(200).json({ success: true, data: nebuluxData });
+    } catch (error) {
+        console.log("Error fetching Nebulux data:", error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+
+exports.purchaseXioCoin = async (req, res) => {
+    try {
+        const { amount, txResponse, recipientAddress, userAddress } = req.body;
+
+      
+
+        if (!amount || amount <= 0) {
+            return res.status(400).json({ success: false, message: "Invalid amount." });
+        }
+
+        // Fetch the current price of Xio coin
+        const XioCoin = await tokenvalueModel.findOne({});
+        if (!XioCoin) {
+            return res.status(404).json({ success: false, message: "Nebulux coin not found." });
+        }
+        // if (amount * nebuluxCoin.price < 100) {
+        //     return res.status(400).json({ success: false, message: "Minimum purchase amount is 100 USDT." });
+        // }
+
+        const XioPrice = XioCoin.price;
+
+        // Create a new purchase record
+        // const purchase = await nebuluxPurchaseModel.create({
+        //     userId: user._id,
+        //     totalPrice: amount ,
+        //     quantity: (amount/ XioPrice).toFixed(2),
+        // });
+
+        // Update supply & sold
+        // XioCoin.supply -= Number(amount);
+        XioCoin.soldQuantity += Number(amount);
+        const txnId = generateTxnId();
+
+        // const transaction = await TransactionModel.create({
+        //     userId: user._id,
+        //     amount: Number(amount),
+        //     clientAddress: userAddress,
+        //     mainAddress: recipientAddress,
+        //     hash: txResponse.hash,
+        //     transactionID: txnId,
+        //     type: "deposit"
+        // })
+        // user.transaction.push(transaction._id)
+
+
+        // Save coin and user updates
+
+        XioCoin.updatePrice()
+        await XioCoin.save();
+
+
+        console.log("XioCoin updated:", amount);
+
+        // Transfer XPFI Coin to User's Wallet
+        await TransferXIOCoin({ req, res, walletAddress: userAddress, amount });
+
+        // return res.status(200).json({ success: true, data: purchase });
+
+    } catch (error) {
+        console.log("Error in purchasing Nebulux coin:", error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
 };
